@@ -1,6 +1,6 @@
 <?php
 
-namespace Mews\Captcha;
+namespace STORMSQ\Captcha;
 
 use Exception;
 use Illuminate\Routing\Controller;

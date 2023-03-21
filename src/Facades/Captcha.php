@@ -1,6 +1,6 @@
 <?php
 
-namespace Mews\Captcha\Facades;
+namespace STORMSQ\Captcha\Facades;
 
 use Illuminate\Support\Facades\Facade;
 

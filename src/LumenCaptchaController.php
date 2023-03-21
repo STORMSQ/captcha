@@ -1,6 +1,6 @@
 <?php
 
-namespace Mews\Captcha;
+namespace STORMSQ\Captcha;
 
 use Exception;
 use Laravel\Lumen\Routing\Controller;
@@ -22,5 +22,18 @@ class LumenCaptchaController extends Controller
     public function getCaptcha(Captcha $captcha, $config = 'default')
     {
         return $captcha->create($config);
+    }
+
+    /**
+     * get CAPTCHA api
+     *
+     * @param Captcha $captcha
+     * @param string $config
+     * @return array|mixed
+     * @throws Exception
+     */
+    public function getCaptchaApi(Captcha $captcha, string $config = 'default')
+    {
+        return $captcha->create($config, true);
     }
 }

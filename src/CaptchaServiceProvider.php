@@ -1,6 +1,6 @@
 <?php
 
-namespace Mews\Captcha;
+namespace STORMSQ\Captcha;
 
 use Illuminate\Routing\Router;
 use Illuminate\Support\ServiceProvider;
@@ -20,25 +20,27 @@ class CaptchaServiceProvider extends ServiceProvider
     public function boot(): void
     {
         // Publish configuration files
-        $this->publishes([
-            __DIR__ . '/../config/captcha.php' => config_path('captcha.php')
-        ], 'config');
 
+        require __DIR__ . '/helpers.php';
         // HTTP routing
         if (strpos($this->app->version(), 'Lumen') !== false) {
             /* @var Router $router */
-            $router = $this->app;
-            $router->get('captcha[/api/{config}]', 'Mews\Captcha\LumenCaptchaController@getCaptchaApi');
-            $router->get('captcha[/{config}]', 'Mews\Captcha\LumenCaptchaController@getCaptcha');
-        } else {
+            $router = $this->app['router'];
+
+            $router->get('captcha/api[/{config}]', 'STORMSQ\Captcha\LumenCaptchaController@getCaptchaApi');
+            $router->get('captcha[/{config}]', 'STORMSQ\Captcha\LumenCaptchaController@getCaptcha');
+        }else {
+            $this->publishes([
+                __DIR__ . '/../config/captcha.php' => config_path('captcha.php')
+            ], 'config');
             /* @var Router $router */
             $router = $this->app['router'];
             if ((double)$this->app->version() >= 5.2) {
-                $router->get('captcha/api/{config?}', '\Mews\Captcha\CaptchaController@getCaptchaApi')->middleware('web');
-                $router->get('captcha/{config?}', '\Mews\Captcha\CaptchaController@getCaptcha')->middleware('web');
+                $router->get('captcha/api/{config?}', 'STORMSQ\Captcha\CaptchaController@getCaptchaApi')->middleware('web');
+                $router->get('captcha/{config?}', 'STORMSQ\Captcha\CaptchaController@getCaptcha')->middleware('web');
             } else {
-                $router->get('captcha/api/{config?}', '\Mews\Captcha\CaptchaController@getCaptchaApi');
-                $router->get('captcha/{config?}', '\Mews\Captcha\CaptchaController@getCaptcha');
+                $router->get('captcha/api/{config?}', 'STORMSQ\Captcha\CaptchaController@getCaptchaApi');
+                $router->get('captcha/{config?}', 'STORMSQ\Captcha\CaptchaController@getCaptcha');
             }
         }
 
@@ -53,6 +55,7 @@ class CaptchaServiceProvider extends ServiceProvider
         // Validator extensions
         $validator->extend('captcha_api', function ($attribute, $value, $parameters) {
             return config('captcha.disable') || ($value && captcha_api_check($value, $parameters[0], $parameters[1] ?? 'default'));
+            //return ($value && captcha_api_check($value, $parameters[0], $parameters[1] ?? 'default'));
         });
     }
 
@@ -75,7 +78,8 @@ class CaptchaServiceProvider extends ServiceProvider
                 $app['Illuminate\Filesystem\Filesystem'],
                 $app['Illuminate\Contracts\Config\Repository'],
                 $app['Intervention\Image\ImageManager'],
-                $app['Illuminate\Session\Store'],
+                //$app['Illuminate\Session\Store'],
+                app('session'),
                 $app['Illuminate\Hashing\BcryptHasher'],
                 $app['Illuminate\Support\Str']
             );

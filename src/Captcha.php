@@ -1,6 +1,6 @@
 <?php
 
-namespace Mews\Captcha;
+namespace STORMSQ\Captcha;
 
 /**
  * Laravel 5 & 6 Captcha package
@@ -23,7 +23,8 @@ use Illuminate\Support\Str;
 use Intervention\Image\Gd\Font;
 use Intervention\Image\Image;
 use Intervention\Image\ImageManager;
-use Illuminate\Session\Store as Session;
+//use Illuminate\Session\Store as Session;
+use Illuminate\Session\SessionManager as Session;
 use Illuminate\Support\HtmlString;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Crypt;
@@ -520,7 +521,7 @@ class Captcha
         }
 
         $this->configure($config);
-
+        //Log::info("run");
         if(!$this->sensitive) $value = $this->str->lower($value);
         if($this->encrypt) $key = Crypt::decrypt($key);
         return $this->hasher->check($value, $key);
